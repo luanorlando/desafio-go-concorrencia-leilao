@@ -39,7 +39,22 @@ go test -v ./internal/infra/database/auction/...
 Todas as requisições prontas para testes manuais (criação de leilões, lances, consultas e validação do fechamento) estão disponíveis no arquivo:
 - `api/auction.http`
 
-Para criar um leilão novo use 
+Validando fluxo principal do leilão
+```bash
+curl -i -X POST http://localhost:8080/auction \
+  -H "Content-Type: application/json" \
+  -d '{
+    "product_name": "Nintendo",
+    "category": "Eletronicos",
+    "description": "Console novo na caixa com 2 controles.",
+    "condition": 0
+  }'
+```
+
+Veriicar os leilões com status finalizado
+```bash
+curl -i -X GET "http://localhost:8080/auction?status=1"
+```
 
 # Base do projeto (obrigatória)
 O desafio deve ser implementado sobre o código-fonte disponibilizado pelo curso.
