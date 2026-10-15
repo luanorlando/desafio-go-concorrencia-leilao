@@ -1,0 +1,96 @@
+### ==============================================================================
+### Configurações / Variáveis
+### ==============================================================================
+@host = http://localhost:8080
+
+### IMPORTANTE:
+### 1. Após criar um leilão no Passo 1, execute o Passo 2 para listar e copie o "id"
+###    do leilão criado para a variável @auction_id abaixo.
+### 2. O projeto não possui endpoint para cadastrar usuários (POST /user).
+###    Para criar lances, você pode usar qualquer UUID válido no @user_id.
+@auction_id = 79f59b9d-8f31-4812-bfb6-bf7ebf462dd6
+@user_id = 7a86f9f5-4673-455b-b9d9-4822f37c35e1
+
+
+### ==============================================================================
+### 1. LEILÕES (AUCTIONS)
+### ==============================================================================
+
+### Passo 1: Criar novo leilão
+### Retorna 201 Created (sem body).
+### Validações:
+### - product_name: min 1 char
+### - category: min 2 chars
+### - description: min 10 e max 200 chars
+### - condition: 0 (Novo), 1 (Usado), 2 (Recondicionado)
+POST {{host}}/auction
+Content-Type: application/json
+
+{
+  "product_name": "Nintendo",
+  "category": "Eletronicos",
+  "description": "Console novo na caixa com 2 controles.",
+  "condition": 0
+}
+
+### Passo 2: Listar leilões ativos (status = 0)
+### ATENÇÃO: O parâmetro "status" é OBRIGATÓRIO na API (se omitido, retorna 400 Bad Request).
+### Copie o "id" do leilão retornado aqui e cole na variável @auction_id acima!
+GET {{host}}/auction?status=0
+
+### Passo 3: Buscar leilão específico por ID
+### O :auctionId deve ser um UUID válido existente.
+GET {{host}}/auction/{{auction_id}}
+
+### Passo 4: Filtrar leilões por status, categoria e nome
+### "status" é obrigatório (0 = Active, 1 = Completed). "category" e "productName" são opcionais.
+GET {{host}}/auction?status=0&category=Eletronicos&productName=Nintendo
+
+### Passo 5: Listar leilões finalizados / fechados (status = 1)
+### Use para verificar o fechamento automático após expirar o AUCTION_DURATION.
+GET {{host}}/auction?status=1
+
+
+### ==============================================================================
+### 2. LANCES (BIDS)
+### ==============================================================================
+
+### Passo 6: Criar lance para um leilão ativo
+### Validações:
+### - user_id: UUID válido
+### - auction_id: UUID válido de um leilão ativo
+### - amount: float > 0
+### NOTA DE CONCORRÊNCIA: A API agrupa os lances em lote (batch) em memória.
+### Os lances são persistidos no MongoDB quando acumulam MAX_BATCH_SIZE (ex: 4 lances)
+### ou quando expira o BATCH_INSERT_INTERVAL (ex: 20s).
+POST {{host}}/bid
+Content-Type: application/json
+
+{
+  "user_id": "{{user_id}}",
+  "auction_id": "{{auction_id}}",
+  "amount": 2500.00
+}
+
+### Passo 7: Listar lances de um leilão
+GET {{host}}/bid/{{auction_id}}
+
+### Passo 8: Buscar lance vencedor de um leilão
+### NOTA: Se o leilão ainda não possuir lances gravados no banco, este endpoint
+### retornará 500 (pois busca o maior lance e nenhum documento é encontrado).
+GET {{host}}/auction/winner/{{auction_id}}
+
+
+### ==============================================================================
+### 3. USUÁRIOS (USERS)
+### ==============================================================================
+
+### Passo 9: Buscar usuário por ID
+### NOTA IMPORTANTE SOBRE ESTE ENDPOINT:
+### A aplicação base NÃO possui endpoint de cadastro de usuários (não existe POST /user).
+### Portanto, esta rota busca diretamente na collection "users" do MongoDB.
+### Se o ID não foi previamente inserido no banco de dados MongoDB, retornará 404 Not Found:
+### {"message": "User not found with this id = ...", "error": "not_found", "code": 404}.
+### Para testar com sucesso, insira um documento manualmente no MongoDB:
+### db.users.insertOne({ _id: "7a86f9f5-4673-455b-b9d9-4822f37c35e1", name: "Luan" })
+GET {{host}}/user/{{user_id}}
