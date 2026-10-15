@@ -39,6 +39,8 @@ go test -v ./internal/infra/database/auction/...
 Todas as requisições prontas para testes manuais (criação de leilões, lances, consultas e validação do fechamento) estão disponíveis no arquivo:
 - `api/auction.http`
 
+Para criar um leilão novo use 
+
 # Base do projeto (obrigatória)
 O desafio deve ser implementado sobre o código-fonte disponibilizado pelo curso.
 Repositório base: https://github.com/devfullcycle/labs-auction-goexpert
