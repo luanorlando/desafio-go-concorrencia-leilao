@@ -57,11 +57,11 @@ func TestAuctionAutoClose_Integration(t *testing.T) {
 
 	createdAuction, findErr := repo.FindAuctionById(context.Background(), auctionEntity.Id)
 	assert.Nil(t, findErr)
-	assert.Equal(t, auction_entity.Active, createdAuction.Status, "Passo 1: Leilao deve estar aberto (Active)")
+	assert.Equal(t, auction_entity.Active, createdAuction.Status, "Leilao deve estar aberto (Active)")
 
 	time.Sleep(duration + 300*time.Millisecond)
 
 	closedAuction, findErr2 := repo.FindAuctionById(context.Background(), auctionEntity.Id)
 	assert.Nil(t, findErr2)
-	assert.Equal(t, auction_entity.Completed, closedAuction.Status, "Passo 3: Status alterado automaticamente para Closed (Completed)")
+	assert.Equal(t, auction_entity.Completed, closedAuction.Status, "Status alterado automaticamente para Closed")
 }
