@@ -4,6 +4,41 @@ Sistema de leilões com Goroutines — Go Expert
 # Objetivo
 Adicionar uma funcionalidade crítica ao sistema de leilões existente: o fechamento automático. Atualmente, o projeto permite criar leilões e dar lances, mas o leilão nunca expira. Sua missão é utilizar Goroutines para garantir que o leilão seja encerrado automaticamente após um tempo pré-definido.
 
+# Setup
+
+### 1. Configuração das Variáveis de Ambiente
+As variáveis de ambiente estão centralizadas no arquivo `cmd/auction/.env`:
+
+- `AUCTION_DURATION`: define a duração do leilão até o seu fechamento automático por Goroutine (ex: `20s`, `1m`, `120s`). A aplicação também aceita `AUCTION_INTERVAL` como fallback.
+- `BATCH_INSERT_INTERVAL`: intervalo de inserção em lote dos lances (ex: `20s`).
+- `MAX_BATCH_SIZE`: quantidade máxima de lances por lote em memória (ex: `4`).
+
+### 2. Instruções para Rodar o Projeto (Docker Compose)
+Para subir a aplicação e o banco de dados MongoDB automaticamente:
+
+```bash
+docker compose up -d --build
+```
+
+- API disponível em: `http://localhost:8080`
+- MongoDB disponível em: `localhost:27017`
+
+Para encerrar os containers:
+```bash
+docker compose down
+```
+
+### 3. Instruções para Executar os Testes Automatizados
+Para rodar os testes automatizados que comprovam o fechamento automático do leilão:
+
+```bash
+go test -v ./internal/infra/database/auction/...
+```
+
+### 4. Requisições HTTP
+Todas as requisições prontas para testes manuais (criação de leilões, lances, consultas e validação do fechamento) estão disponíveis no arquivo:
+- `api/auction.http`
+
 # Base do projeto (obrigatória)
 O desafio deve ser implementado sobre o código-fonte disponibilizado pelo curso.
 Repositório base: https://github.com/devfullcycle/labs-auction-goexpert
@@ -25,7 +60,7 @@ internal/infra/database/auction/create_auction.go
 É aqui que a mágica deve acontecer.
 
 # Requisitos de testes
-- [ ] Implemente um teste automatizado que comprove que o fechamento está ocorrendo.
+- [x] Implemente um teste automatizado que comprove que o fechamento está ocorrendo.
 Cenário
 
 |Passo|	Ação	|Resultado esperado|
@@ -39,12 +74,13 @@ Cenário
 - Analise como o sistema atual verifica se um leilão é válido na rotina de criação de bid para entender a lógica de tempo e status.
 
 # Entregável
-- [ ] Código fonte: O link para o seu repositório contendo a implementação completa.
-- [ ] Documentação (README):
-- Instruções para rodar o projeto.
-- Instruções para configurar as variáveis de ambiente de tempo.
-- [ ] Docker: O projeto deve estar configurado para rodar via Docker / Docker Compose.
+- [x] Código fonte: O link para o seu repositório contendo a implementação completa.
+- [x] Documentação (README):
+  - [x] Instruções para rodar o projeto.
+  - [x] Instruções para configurar as variáveis de ambiente de tempo.
+- [x] Docker: O projeto deve estar configurado para rodar via Docker / Docker Compose.
 
 # Regras de entrega
 1. Repositório exclusivo: O repositório deve conter apenas o projeto em questão.
 2. Branch principal: Todo o código deve estar na branch main.
+
