@@ -64,3 +64,6 @@ func initDependencies(database *mongo.Database) (
 
 	return
 }
+
+// Criar container
+// docker container run -d -p 27017:27017 name auctionDB mongo
