@@ -33,20 +33,20 @@ Content-Type: application/json
   "condition": 0
 }
 
-### Passo 2: Listar leilões ativos (status = 0)
+### Listar leilões ativos (status = 0)
 ### ATENÇÃO: O parâmetro "status" é OBRIGATÓRIO na API (se omitido, retorna 400 Bad Request).
 ### Copie o "id" do leilão retornado aqui e cole na variável @auction_id acima!
 GET {{host}}/auction?status=0
 
-### Passo 3: Buscar leilão específico por ID
+### Buscar leilão específico por ID
 ### O :auctionId deve ser um UUID válido existente.
 GET {{host}}/auction/{{auction_id}}
 
-### Passo 4: Filtrar leilões por status, categoria e nome
-### "status" é obrigatório (0 = Active, 1 = Completed). "category" e "productName" são opcionais.
-GET {{host}}/auction?status=0&category=Eletronicos&productName=Nintendo
+### Filtrar leilões por status, categoria e nome
+### "status" é obrigatório (0 = Active, 1 = Completed).
+GET {{host}}/auction?status=1
 
-### Passo 5: Listar leilões finalizados / fechados (status = 1)
+###  Listar leilões finalizados / fechados (status = 1)
 ### Use para verificar o fechamento automático após expirar o AUCTION_DURATION.
 GET {{host}}/auction?status=1
 
@@ -55,7 +55,7 @@ GET {{host}}/auction?status=1
 ### 2. LANCES (BIDS)
 ### ==============================================================================
 
-### Passo 6: Criar lance para um leilão ativo
+### Criar lance para um leilão ativo
 ### Validações:
 ### - user_id: UUID válido
 ### - auction_id: UUID válido de um leilão ativo
@@ -69,28 +69,11 @@ Content-Type: application/json
 {
   "user_id": "{{user_id}}",
   "auction_id": "{{auction_id}}",
-  "amount": 2500.00
+  "amount": 200.00
 }
 
-### Passo 7: Listar lances de um leilão
-GET {{host}}/bid/{{auction_id}}
 
-### Passo 8: Buscar lance vencedor de um leilão
+### Buscar lance vencedor de um leilão
 ### NOTA: Se o leilão ainda não possuir lances gravados no banco, este endpoint
 ### retornará 500 (pois busca o maior lance e nenhum documento é encontrado).
 GET {{host}}/auction/winner/{{auction_id}}
-
-
-### ==============================================================================
-### 3. USUÁRIOS (USERS)
-### ==============================================================================
-
-### Passo 9: Buscar usuário por ID
-### NOTA IMPORTANTE SOBRE ESTE ENDPOINT:
-### A aplicação base NÃO possui endpoint de cadastro de usuários (não existe POST /user).
-### Portanto, esta rota busca diretamente na collection "users" do MongoDB.
-### Se o ID não foi previamente inserido no banco de dados MongoDB, retornará 404 Not Found:
-### {"message": "User not found with this id = ...", "error": "not_found", "code": 404}.
-### Para testar com sucesso, insira um documento manualmente no MongoDB:
-### db.users.insertOne({ _id: "7a86f9f5-4673-455b-b9d9-4822f37c35e1", name: "Luan" })
-GET {{host}}/user/{{user_id}}
